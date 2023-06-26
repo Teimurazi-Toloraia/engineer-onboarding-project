@@ -1,0 +1,77 @@
+define
+
+# attributes
+
+    date sub attribute,
+        value datetime,
+        plays visited:start_date,
+        plays visited:end_date;
+
+    name sub attribute,
+        value string;
+    
+    firstname sub name;
+
+    lastname sub name;
+
+#  entities
+
+    person sub entity,
+        owns firstname,
+        owns lastname,
+        plays friendship:person1;
+        plays friendship:person2,
+        plays nationality:person;
+        plays visited:person;
+
+    city sub entity,
+        owns name,
+        plays visited:destination;
+
+    country sub entity,
+        owns name,
+        plays nationality:homeland;
+
+# relations
+
+    visited sub relation,
+        relates person,
+        relates destination,
+        owns start_date,
+        owns end_date;
+
+    friendship sub relation,
+        relates person1,
+        relates person2;
+
+    nationality sub relation,
+        relates person,
+        relates homeland;
+
+# rules
+
+rule friendship-is-mutual:
+    when {
+        (person: $x, $y) isa friendship
+    }
+    then {
+        (person: $y, $x) isa friendship
+    }
+
+rule friends-friend-is-a-friend:
+    when {
+        (person: $x, $y) isa friendship
+        (person: $y, $z) isa friendship
+    }
+    then {
+        (person: $x, $z) isa friendship
+    }
+
+rule people-from-same-country-are-friends: 
+    when {
+        (person: $person1, homeland: $x) isa nationality;
+        (person: $person2, homeland: $x) isa nationality;
+    }
+    then {
+        (person: $person1, person: $person2) isa friendship;
+    };
