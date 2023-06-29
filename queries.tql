@@ -1,0 +1,23 @@
+match $x isa city, has name $y; get $y;
+
+match $x isa city; get $x;
+
+match
+  $city isa city;
+  $visited(visited: $city) isa visited;
+aggregate count($visited) as num_visits;
+sort $num_visits desc;
+get $city, $num_visits;
+limit 1;
+
+
+match
+  $p isa person;
+  $friendship(person1: $p, person2: $friend) isa friendship;
+  (person: $p, destination: $t, start_date: $s1, end_date: $e1) isa visited;
+  (person: $friend, destination: $t, start_date: $s2, end_date: $e2) isa visited;
+  max($s1, $s2) < min($e1, $e2);
+aggregate count($friend, $t) as num_friends;
+sort $num_friends desc;
+get $p, $num_friends;
+limit 1;
